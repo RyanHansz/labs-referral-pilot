@@ -127,7 +127,7 @@ const ResourcesList = ({
                   href={normalizeUrl(r.website)}
                   rel="noopener noreferrer"
                   target="_blank"
-                  className="text-base text-gray-800"
+                  className="text-base text-blue-600 hover:underline"
                 >
                   {r.website}
                 </Link>
