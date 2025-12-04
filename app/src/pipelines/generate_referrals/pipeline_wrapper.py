@@ -21,7 +21,7 @@ tracer = phoenix_utils.tracer_provider.get_tracer(__name__)
 
 
 class ReferralType(str, Enum):
-    EXTERNAL = "external"
+    COMMUNITY = "community"
     GOODWILL = "goodwill"
     GOVERNMENT = "government"
 
@@ -51,7 +51,7 @@ response_schema = """
         "website"?: string | null;
         "description": string;
         "justification": string;
-        "referral_type"?: "external" | "goodwill" | "government" | null;
+        "referral_type"?: "community" | "goodwill" | "government" | null;
     }[];
 }
 """

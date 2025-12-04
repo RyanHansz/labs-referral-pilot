@@ -41,7 +41,7 @@ const sampleResources: Resource[] = [
     addresses: ["321 Community Blvd, Portland, OR 97209"],
     phones: ["503-555-3333"],
     website: "www.communityaction.org",
-    referral_type: "external",
+    referral_type: "community",
   },
 ];
 
@@ -102,7 +102,7 @@ export const ExternalResource: Story = {
         description: "Community programs and resources",
         addresses: ["300 Community St, Portland, OR"],
         website: "https://localcenter.org",
-        referral_type: "external",
+        referral_type: "community",
       },
     ],
   },
