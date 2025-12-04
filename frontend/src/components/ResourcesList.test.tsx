@@ -97,10 +97,10 @@ describe("ResourcesList", () => {
     expect(screen.getByTestId("government_referral")).toBeInTheDocument();
   });
 
-  it("displays community referral type indicator", () => {
+  it("displays external referral type indicator", () => {
     const resource: Resource = {
       name: "Community Center",
-      referral_type: "community",
+      referral_type: "external",
     };
 
     render(
@@ -110,7 +110,7 @@ describe("ResourcesList", () => {
       />,
     );
 
-    expect(screen.getByTestId("community_referral")).toBeInTheDocument();
+    expect(screen.getByTestId("external_referral")).toBeInTheDocument();
   });
 
   it("does not display referral type indicator when undefined", () => {

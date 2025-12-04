@@ -32,10 +32,10 @@ const referralTypeIndicator = (referralType: string | undefined) => {
         </span>
       );
     }
-    case "community": {
+    case "external": {
       return (
         <span
-          data-testid="community_referral"
+          data-testid="external_referral"
           className="inline-flex items-center gap-1.5 bg-transparent text-green-800 ml-4 mt-3 px-2.5 py-1 max-w-[15rem] text-sm font-bold"
         >
           <HandHeart className="h-4 w-4 shrink-0" />
