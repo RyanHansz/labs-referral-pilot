@@ -295,7 +295,7 @@ export function ClientDetailsInput({
         </CardContent>
       </Card>
 
-      <div className="space-y-2">
+      <div className="mt-6 space-y-3">
         <Button
           type="button"
           onClick={onFindResources}
@@ -321,8 +321,8 @@ export function ClientDetailsInput({
           )}
         </Button>
         {!loading && selectedCategories.length === 0 && !clientDescription.trim() && (
-          <p className="text-center text-gray-600 text-base">
-            Enter client details or select a category
+          <p className="text-center text-gray-500 text-base">
+            Please describe your client's situation above or select at least one resource category to continue
           </p>
         )}
       </div>
