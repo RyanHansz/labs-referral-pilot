@@ -322,7 +322,7 @@ export function ClientDetailsInput({
         </Button>
         {!loading && selectedCategories.length === 0 && !clientDescription.trim() && (
           <p className="text-center text-gray-500 text-base">
-            Please describe your client's situation above or select at least one resource category to continue
+            Enter client details or select a category to find resources
           </p>
         )}
       </div>
