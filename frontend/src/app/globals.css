@@ -4,40 +4,66 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated design tokens to match the history section design brief */
+  /* Updated design tokens using Goodwill Blue (#0053A0) */
   --background: 0 0% 100%;
   --foreground: 215 25% 27%;
   --card: 210 40% 94%;
   --card-foreground: 215 25% 27%;
   --popover: 0 0% 100%;
   --popover-foreground: 215 25% 27%;
-  --primary: 158 64% 52%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 160 84% 39%;
+
+  /* Goodwill Blue as primary color */
+  --primary: 210 100% 31%; /* #0053A0 - Goodwill Blue */
+  --primary-foreground: 0 0% 100%; /* White text on Goodwill Blue */
+
+  /* Secondary using slightly lighter Goodwill Blue */
+  --secondary: 210 100% 38%; /* Lighter shade for secondary actions */
   --secondary-foreground: 0 0% 100%;
+
   --muted: 210 40% 94%;
   --muted-foreground: 215 25% 27%;
-  --accent: 160 84% 39%;
+
+  /* Accent using Goodwill Blue for consistency */
+  --accent: 210 100% 31%; /* Goodwill Blue */
   --accent-foreground: 0 0% 100%;
+
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 100%;
   --border: 220 13% 91%;
   --input: 210 40% 94%;
-  --ring: 158 64% 52%;
-  --chart-1: 160 84% 39%;
-  --chart-2: 158 64% 52%;
+
+  /* Ring color using Goodwill Blue for focus states */
+  --ring: 210 100% 31%; /* Goodwill Blue for focus rings */
+
+  /* Charts using Goodwill Blue variations */
+  --chart-1: 210 100% 31%; /* Goodwill Blue */
+  --chart-2: 210 100% 38%; /* Lighter Goodwill Blue */
   --chart-3: 0 84.2% 60.2%;
   --chart-4: 43 96% 56%;
   --chart-5: 27 96% 61%;
   --radius: 0.5rem;
+
+  /* Sidebar using Goodwill Blue */
   --sidebar-background: 0 0% 100%;
   --sidebar-foreground: 215 25% 27%;
-  --sidebar-primary: 158 64% 52%;
+  --sidebar-primary: 210 100% 31%; /* Goodwill Blue */
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 160 84% 39%;
+  --sidebar-accent: 210 100% 38%; /* Lighter Goodwill Blue */
   --sidebar-accent-foreground: 0 0% 100%;
   --sidebar-border: 220 13% 91%;
-  --sidebar-ring: 158 64% 52%;
+  --sidebar-ring: 210 100% 31%; /* Goodwill Blue */
+
+  /* Goodwill Blue color scale for direct use */
+  --goodwill-blue-50: 210 100% 95%; /* Very light background */
+  --goodwill-blue-100: 210 100% 90%; /* Light background */
+  --goodwill-blue-200: 210 100% 80%; /* Subtle background */
+  --goodwill-blue-300: 210 100% 70%; /* Muted */
+  --goodwill-blue-400: 210 100% 50%; /* Bright */
+  --goodwill-blue-500: 210 100% 31%; /* Primary - Goodwill Blue #0053A0 */
+  --goodwill-blue-600: 210 100% 24%; /* Hover state */
+  --goodwill-blue-700: 210 100% 18%; /* Active state */
+  --goodwill-blue-800: 210 100% 12%; /* Dark text */
+  --goodwill-blue-900: 210 100% 8%; /* Very dark text */
 }
 
 .dark {
@@ -114,6 +140,18 @@
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* Goodwill Blue color scale */
+  --color-goodwill-blue-50: hsl(var(--goodwill-blue-50));
+  --color-goodwill-blue-100: hsl(var(--goodwill-blue-100));
+  --color-goodwill-blue-200: hsl(var(--goodwill-blue-200));
+  --color-goodwill-blue-300: hsl(var(--goodwill-blue-300));
+  --color-goodwill-blue-400: hsl(var(--goodwill-blue-400));
+  --color-goodwill-blue-500: hsl(var(--goodwill-blue-500));
+  --color-goodwill-blue-600: hsl(var(--goodwill-blue-600));
+  --color-goodwill-blue-700: hsl(var(--goodwill-blue-700));
+  --color-goodwill-blue-800: hsl(var(--goodwill-blue-800));
+  --color-goodwill-blue-900: hsl(var(--goodwill-blue-900));
 }
 
 @layer base {
@@ -125,19 +163,32 @@
   }
 }
 
-/* Added custom button style to force proper contrast */
+/* Custom button styles using Goodwill Blue with proper accessibility */
 @layer components {
   .generate-referrals-button {
-    background-color: #2563eb !important;
+    background-color: #0053A0 !important; /* Goodwill Blue */
     color: #ffffff !important;
+    cursor: pointer !important;
   }
 
-  .generate-referrals-button:hover {
-    background-color: #1d4ed8 !important;
+  .generate-referrals-button:hover:not(:disabled) {
+    background-color: hsl(var(--goodwill-blue-600)) !important; /* Darker on hover */
+    cursor: pointer !important;
+  }
+
+  .generate-referrals-button:active:not(:disabled) {
+    background-color: hsl(var(--goodwill-blue-700)) !important; /* Even darker when clicked */
+  }
+
+  .generate-referrals-button:focus-visible {
+    outline: 2px solid hsl(var(--goodwill-blue-500)) !important;
+    outline-offset: 2px !important;
   }
 
   .generate-referrals-button:disabled {
     background-color: #9ca3af !important;
     color: #ffffff !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
   }
 }
