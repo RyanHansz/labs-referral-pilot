@@ -73,32 +73,36 @@
   --card-foreground: 210 40% 98%;
   --popover: 222.2 84% 4.9%;
   --popover-foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 222.2 84% 4.9%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
+  /* Goodwill Blue for dark mode - using lighter shades for better contrast */
+  --primary: 210 100% 70%; /* Light Goodwill Blue for dark backgrounds */
+  --primary-foreground: 210 100% 8%; /* Dark text on light blue */
+  --secondary: 210 100% 60%; /* Even lighter for secondary in dark mode */
+  --secondary-foreground: 210 100% 8%;
   --muted: 217.2 32.6% 17.5%;
   --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
+  --accent: 210 100% 70%; /* Light Goodwill Blue accent */
+  --accent-foreground: 210 100% 8%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 210 40% 98%;
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 94.1%;
-  --chart-1: 220 70% 50%;
-  --chart-2: 160 60% 45%;
-  --chart-3: 30 80% 55%;
-  --chart-4: 280 65% 60%;
-  --chart-5: 340 75% 55%;
+  /* Ring color using light Goodwill Blue for focus states in dark mode */
+  --ring: 210 100% 70%; /* Light Goodwill Blue for focus rings in dark mode */
+  /* Charts using Goodwill Blue variations for dark mode */
+  --chart-1: 210 100% 70%; /* Light Goodwill Blue */
+  --chart-2: 210 100% 60%; /* Slightly darker */
+  --chart-3: 0 84.2% 60.2%;
+  --chart-4: 43 96% 56%;
+  --chart-5: 27 96% 61%;
   --sidebar-background: 240 5.9% 10%;
   --sidebar-foreground: 240 4.8% 95.9%;
-  --sidebar-primary: 224.3 76.3% 94.1%;
-  --sidebar-primary-foreground: 240 5.9% 10%;
-  --sidebar-accent: 240 3.7% 15.9%;
-  --sidebar-accent-foreground: 240 4.8% 95.9%;
+  /* Sidebar using Goodwill Blue for dark mode */
+  --sidebar-primary: 210 100% 70%; /* Light Goodwill Blue */
+  --sidebar-primary-foreground: 210 100% 8%;
+  --sidebar-accent: 210 100% 20%; /* Darker blue for accent areas */
+  --sidebar-accent-foreground: 210 100% 90%;
   --sidebar-border: 240 3.7% 15.9%;
-  --sidebar-ring: 217.2 91.2% 59.8%;
+  --sidebar-ring: 210 100% 70%; /* Light Goodwill Blue */
 }
 
 @theme inline {
@@ -192,7 +196,7 @@
 /* Custom button styles using Goodwill Blue with proper accessibility */
 @layer components {
   .generate-referrals-button {
-    background-color: #0053A0 !important; /* Goodwill Blue */
+    background-color: hsl(var(--goodwill-blue-500)) !important; /* Goodwill Blue from CSS variable */
     color: #ffffff !important;
     cursor: pointer !important;
   }
