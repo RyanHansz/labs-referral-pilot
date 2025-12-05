@@ -10,7 +10,7 @@ const referralTypeIndicator = (referralType: string | undefined) => {
       return (
         <span
           data-testid="goodwill_referral"
-          className="inline-flex items-center gap-1.5 bg-transparent text-blue-800 ml-4 mt-3 px-2.5 py-1 max-w-[15rem] text-sm font-bold"
+          className="inline-flex items-center gap-1.5 bg-transparent text-blue-800 ml-4 mt-3 px-2.5 py-1 max-w-[15rem] text-base font-bold"
         >
           <img
             src="/img/Goodwill_Industries_Logo.svg"
@@ -25,7 +25,7 @@ const referralTypeIndicator = (referralType: string | undefined) => {
       return (
         <span
           data-testid="government_referral"
-          className="inline-flex items-center gap-1.5 bg-transparent text-gray-800 ml-4 mt-3 px-2.5 py-1 max-w-[15rem] text-sm font-bold"
+          className="inline-flex items-center gap-1.5 bg-transparent text-gray-800 ml-4 mt-3 px-2.5 py-1 max-w-[15rem] text-base font-bold"
         >
           <Landmark className="h-4 w-4 shrink-0" />
           <span className="truncate">Government</span>
@@ -36,7 +36,7 @@ const referralTypeIndicator = (referralType: string | undefined) => {
       return (
         <span
           data-testid="external_referral"
-          className="inline-flex items-center gap-1.5 bg-transparent text-green-800 ml-4 mt-3 px-2.5 py-1 max-w-[15rem] text-sm font-bold"
+          className="inline-flex items-center gap-1.5 bg-transparent text-green-800 ml-4 mt-3 px-2.5 py-1 max-w-[15rem] text-base font-bold"
         >
           <HandHeart className="h-4 w-4 shrink-0" />
           <span className="truncate">External</span>
@@ -75,7 +75,7 @@ const ResourcesList = ({
       {resources.map((r, i) => (
         <Card
           key={i}
-          className="relative bg-white shadow-sm mb-5 min-w-[16rem]"
+          className="relative bg-white shadow-sm mb-5 min-w-[16rem] max-w-5xl"
         >
           {referralTypeIndicator(r.referral_type)}
           {/* Remove button */}
@@ -128,8 +128,10 @@ const ResourcesList = ({
                   rel="noopener noreferrer"
                   target="_blank"
                   className="text-base text-gray-800"
+                  aria-label={`${r.website} (opens in new window)`}
                 >
                   {r.website}
+                  <span className="sr-only"> (opens in new window)</span>
                 </Link>
               </div>
             )}

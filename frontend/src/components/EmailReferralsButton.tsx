@@ -86,6 +86,8 @@ export function EmailReferralsButton({ resultId }: EmailReferralsProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               data-testid="emailInput"
+              aria-invalid={email && !isValidEmail(email) ? "true" : "false"}
+              aria-describedby={email && !isValidEmail(email) ? "email-error" : undefined}
               className={
                 email && !isValidEmail(email)
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500"
@@ -93,7 +95,7 @@ export function EmailReferralsButton({ resultId }: EmailReferralsProps) {
               }
             />
             {email && !isValidEmail(email) && (
-              <p className="text-sm text-red-500">
+              <p id="email-error" className="text-base text-red-500" role="alert" aria-live="polite">
                 Please enter a valid email address
               </p>
             )}
@@ -124,11 +126,13 @@ export function EmailReferralsButton({ resultId }: EmailReferralsProps) {
             </div>
             {statusMessage && (
               <p
-                className={`text-sm ${
+                className={`text-base ${
                   statusMessage.includes("error sending the email")
                     ? "text-red-500"
                     : "text-green-900"
                 }`}
+                role="status"
+                aria-live="polite"
               >
                 {statusMessage}
               </p>

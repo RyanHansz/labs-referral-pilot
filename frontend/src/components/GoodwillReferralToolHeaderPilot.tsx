@@ -10,7 +10,7 @@ export function GoodwillReferralToolHeaderPilot() {
           />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Find Resources </h2>
+          <h1 className="text-2xl font-bold text-gray-900">Find Resources</h1>
           <div className="flex items-center gap-2">
             <p className="text-blue-600 font-medium">GenAI Referral Tool</p>
             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300">

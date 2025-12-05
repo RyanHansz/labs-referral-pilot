@@ -39,7 +39,7 @@ export function ActionPlanSection({
               variant="outline"
               size="sm"
               onClick={onSelectAllResources}
-              className="text-xs"
+              className="text-base"
             >
               {selectedResources.length === resources.length
                 ? "Deselect All"
@@ -70,7 +70,7 @@ export function ActionPlanSection({
                     {resource.name}
                   </div>
                   {resource.description && (
-                    <div className="text-sm text-gray-600">
+                    <div className="text-base text-gray-600">
                       {resource.description}
                     </div>
                   )}

@@ -12,7 +12,7 @@ export function PilotFeedbackBanner() {
             <p className="font-semibold text-amber-900">
               Pilot Version - Work in Progress
             </p>
-            <p className="text-sm text-amber-900">
+            <p className="text-base text-amber-900">
               This tool is being tested with Goodwill staff. Please share
               feedback if you spot issues or have suggestions!
             </p>
@@ -22,13 +22,15 @@ export function PilotFeedbackBanner() {
         {/* Right section with button */}
         <Button
           variant="outline"
-          className="bg-white hover:bg-amber-50 border-amber-300 text-amber-900 cursor-pointer"
+          className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 border-amber-600 text-white cursor-pointer shadow-sm"
           onClick={() =>
             window.open("https://forms.gle/nfBWHpVbXT1kdSX3A", "_blank")
           }
+          aria-label="Share Feedback (opens in new window)"
         >
-          <MessageCircle className="w-4 h-4" />
+          <MessageCircle className="w-4 h-4" aria-hidden="true" />
           Share Feedback
+          <span className="sr-only"> (opens in new window)</span>
         </Button>
       </div>
     </div>

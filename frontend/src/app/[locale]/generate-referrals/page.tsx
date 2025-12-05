@@ -284,6 +284,12 @@ export default function Page() {
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       {!userName || !userEmail ? (
         <WelcomeUserInputScreen
           setUserName={setUserName}
@@ -293,12 +299,14 @@ export default function Page() {
         <div className="print:hidden">
           <PilotFeedbackBanner />
           <GoodwillReferralToolHeaderPilot />
-          <div className="flex flex-col gap-2 m-4">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="mb-6"
-            >
+          {/* Max-width container for content - responsive and centered */}
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="main-content" className="flex flex-col gap-2 py-4">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="mb-6"
+              >
               {!readyToPrint && (
                 <TabsList className="grid w-full grid-cols-2 bg-gray-100">
                   <TabsTrigger
@@ -394,6 +402,7 @@ export default function Page() {
                 )}
               </div>
             )}
+            </div>
           </div>
         </div>
       )}

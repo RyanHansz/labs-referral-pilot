@@ -90,7 +90,7 @@ const WelcomeUserInputScreen = ({
             <div className="space-y-2">
               <Label
                 htmlFor="userName"
-                className="text-sm font-medium text-gray-700"
+                className="text-base font-medium text-gray-700"
               >
                 Your Name *
               </Label>
@@ -115,13 +115,15 @@ const WelcomeUserInputScreen = ({
                 data-form-type="other"
                 className="w-full bg-white focus-visible:ring-blue-600 focus-visible:ring-offset-0 focus-visible:border-blue-600"
                 autoFocus
+                required
+                aria-required="true"
               />
             </div>
 
             <div className="space-y-2">
               <Label
                 htmlFor="userEmail"
-                className="text-sm font-medium text-gray-700"
+                className="text-base font-medium text-gray-700"
               >
                 Your Goodwill Email *
               </Label>
@@ -145,6 +147,10 @@ const WelcomeUserInputScreen = ({
                 }}
                 autoComplete="off"
                 data-form-type="other"
+                required
+                aria-required="true"
+                aria-invalid={userEmailTouched && !!userEmailError}
+                aria-describedby={userEmailTouched && userEmailError ? "userEmail-error" : undefined}
                 className={`w-full bg-white focus-visible:ring-offset-0 ${
                   userEmailTouched && userEmailError
                     ? "border-red-500 focus-visible:ring-red-500 focus-visible:border-red-500"
@@ -152,7 +158,9 @@ const WelcomeUserInputScreen = ({
                 }`}
               />
               {userEmailTouched && userEmailError && (
-                <p className="text-sm text-red-600 mt-1">{userEmailError}</p>
+                <p id="userEmail-error" className="text-base text-red-600 mt-1" role="alert" aria-live="polite">
+                  {userEmailError}
+                </p>
               )}
             </div>
 
