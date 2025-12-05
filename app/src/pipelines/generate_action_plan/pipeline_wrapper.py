@@ -1,9 +1,12 @@
+import json
 import logging
 from pprint import pformat
+from typing import Iterator
 
 from hayhooks import BasePipelineWrapper
 from haystack import Pipeline
 from haystack.components.builders import ChatPromptBuilder
+from openai import OpenAI
 from openinference.instrumentation import _tracers, using_attributes, using_metadata
 from opentelemetry.trace.status import Status, StatusCode
 from pydantic import BaseModel
@@ -94,6 +97,119 @@ class PipelineWrapper(BasePipelineWrapper):
         )
         logger.debug("Results: %s", pformat(response, width=160))
         return {"response": response["llm"]["replies"][0]._content[0].text}
+
+    # Called for the `{pipeline_name}/chat` or `/chat/completions` streaming endpoint using Server-Sent Events (SSE)
+    def run_chat_completion(self, model: str, messages: list, body: dict) -> Iterator[str]:
+        """
+        Streaming endpoint that yields Server-Sent Events for action plan generation.
+
+        Args:
+            model: Model name (will use gpt-5.1 regardless)
+            messages: Chat messages (not used, we use body params instead)
+            body: Request body containing resources, user_email, and user_query
+
+        Yields:
+            SSE-formatted strings with streaming content
+        """
+        try:
+            # Extract parameters from request body
+            resources = body.get("resources", [])
+            user_email = body.get("user_email", "")
+            user_query = body.get("user_query", "")
+
+            resource_objects = get_resources(resources)
+
+            logger.info(
+                "Starting streaming action plan generation for %d resources, user=%s",
+                len(resource_objects),
+                user_email,
+            )
+            if resource_objects:
+                logger.debug(
+                    "Resources: %s",
+                    ", ".join([r.name for r in resource_objects])
+                )
+
+            # Get the prompt template as ChatMessages
+            prompt_messages = haystack_utils.get_phoenix_prompt("generate_action_plan")
+
+            # Extract and format the prompt text from ChatMessages
+            # For streaming, we modify the prompt to return pure markdown instead of JSON
+            # This provides better UX as the formatted content appears progressively
+            formatted_resources = format_resources(resource_objects)
+
+            # Build the prompt by combining all message texts and replacing variables
+            prompt_parts = []
+            for msg in prompt_messages:
+                msg_text = msg.text or ""
+                # Replace template variables (no spaces - matches Mustache format {{variable}})
+                msg_text = msg_text.replace("{{resources}}", formatted_resources)
+                msg_text = msg_text.replace("{{user_query}}", user_query)
+                # Remove the JSON schema placeholder
+                msg_text = msg_text.replace("{{action_plan_json}}", "")
+
+                prompt_parts.append(msg_text)
+
+            # Add streaming-specific override instructions at the end
+            streaming_override = """
+
+**STREAMING MODE OVERRIDE:**
+For this streaming response, IGNORE the JSON format requirement above. Instead:
+- Output pure markdown text directly (no JSON wrapper)
+- Start with a # heading for the title
+- Include a brief summary paragraph
+- Then provide the full action plan with markdown formatting (headers, lists, links, bold text)
+- Do NOT wrap your response in JSON structure
+- Output the content as if you're writing a document, not JSON
+
+**CRITICAL - ACCURACY REQUIREMENT:**
+- ONLY include timeline, document, or process details that are EXPLICITLY stated in the resource information provided
+- DO NOT make up realistic-sounding but generic timelines (like "a few days", "1-2 weeks", "usually takes X time")
+- If timeline information is not provided in the resource details, DO NOT include a Timeline section
+- If specific documents are not listed in the resource, DO NOT guess what documents might be needed
+- When in doubt, leave out speculative details - only include facts from the resources
+"""
+            prompt_parts.append(streaming_override)
+
+            prompt = "\n\n".join(prompt_parts)
+
+            # Log prompt snippet to verify resources are included
+            if "{{resources}}" in prompt:
+                logger.warning("Resources template variable NOT replaced in prompt!")
+            else:
+                logger.debug("Resources successfully replaced in prompt (length: %d chars)", len(prompt))
+
+            # Call OpenAI Responses API with streaming
+            client = OpenAI()
+            logger.info("Starting OpenAI Responses API stream with model gpt-5.1")
+
+            stream = client.responses.create(
+                model="gpt-5.1",
+                input=prompt,
+                reasoning={"effort": "none"},
+                stream=True,
+            )
+
+            # Process streaming events and yield them
+            event_count = 0
+            for event in stream:
+                event_count += 1
+                logger.debug(f"Received event #{event_count}: type={event.type}")
+
+                if event.type == "response.output_text.delta":
+                    # Yield the text delta directly (hayhooks will wrap it in SSE format)
+                    if hasattr(event, "delta") and event.delta:
+                        logger.debug(f"Yielding delta: {event.delta[:50]}...")
+                        yield event.delta
+
+                elif event.type == "response.done":
+                    logger.info(f"Streaming completed after {event_count} events")
+                    break
+
+        except Exception as e:
+            logger.error("Streaming error: %s", e, exc_info=True)
+            # Yield error as plain text (hayhooks will format as SSE)
+            yield f"Error: {str(e)}"
 
 
 def get_resources(resources: list[Resource] | list[dict]) -> list[Resource]:
