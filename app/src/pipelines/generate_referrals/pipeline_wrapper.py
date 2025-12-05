@@ -16,6 +16,8 @@ from opentelemetry.trace.status import Status, StatusCode
 from pydantic import BaseModel
 
 from src.common import components, haystack_utils, phoenix_utils
+from src.app_config import config
+from src.db.models.support_listing import LlmResponse
 
 logger = logging.getLogger(__name__)
 tracer = phoenix_utils.tracer_provider.get_tracer(__name__)
@@ -253,6 +255,8 @@ Generate 5-10 resources total, outputting each one immediately as you complete i
             # Buffer for accumulating content
             buffer = ""
             resource_count = 0
+            # Accumulate all resources for saving to database
+            all_resources = []
 
             # Process streaming events
             event_count = 0
@@ -285,6 +289,7 @@ Generate 5-10 resources total, outputting each one immediately as you complete i
                                     Resource(**resource_obj)
 
                                     resource_count += 1
+                                    all_resources.append(resource_obj)
                                     logger.info(f"Extracted resource #{resource_count}: {resource_obj.get('name', 'Unknown')}")
 
                                     # Yield the resource as JSON
@@ -316,6 +321,26 @@ Generate 5-10 resources total, outputting each one immediately as you complete i
                 yield json.dumps({
                     "error": "No resources were generated. Please try a different query."
                 })
+            else:
+                # Save results to database after streaming completes
+                try:
+                    result_json = json.dumps({"resources": all_resources})
+                    logger.info("Saving streaming result to database with %d resources", len(all_resources))
+
+                    with config.db_session() as db_session, db_session.begin():
+                        llm_result = LlmResponse(raw_text=result_json)
+                        db_session.add(llm_result)
+                        db_session.flush()  # To get the id assigned
+                        result_id = str(llm_result.id)
+                        logger.info("Saved streaming result with id=%s", result_id)
+
+                        # Yield result_id as a special event
+                        yield json.dumps({"result_id": result_id})
+
+                except Exception as e:
+                    logger.error("Failed to save streaming result: %s", e, exc_info=True)
+                    # Don't fail the whole stream, just log the error
+                    yield json.dumps({"error": f"Failed to save result: {str(e)}"})
 
         except Exception as e:
             logger.error("Streaming error: %s", e, exc_info=True)

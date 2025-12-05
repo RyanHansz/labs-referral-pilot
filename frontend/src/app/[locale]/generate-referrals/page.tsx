@@ -137,13 +137,16 @@ export default function Page() {
           console.log(`Received resource: ${resource.name}`);
         },
         // onComplete callback
-        () => {
+        (resultId?: string) => {
           setIsStreamingResources(false);
           setLoading(false);
           setResult(streamedResources);
-          console.log(`Streaming complete. Total resources: ${streamedResources.length}`);
-          // Note: We don't have a resultId from streaming, so email/print may need adjustment
-          // For now, we'll skip setting resultId
+          if (resultId) {
+            setResultId(resultId);
+            console.log(`Streaming complete. Result ID: ${resultId}, Total resources: ${streamedResources.length}`);
+          } else {
+            console.log(`Streaming complete. Total resources: ${streamedResources.length}`);
+          }
         },
         // onError callback
         (error: string) => {

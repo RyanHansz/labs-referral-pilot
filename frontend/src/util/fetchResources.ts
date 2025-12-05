@@ -9,7 +9,7 @@ export async function fetchResourcesStreaming(
   clientDescription: string,
   userEmail: string,
   onResource: (resource: Resource) => void,
-  onComplete: () => void,
+  onComplete: (resultId?: string) => void,
   onError: (error: string) => void,
 ): Promise<void> {
   const apiDomain = await getApiDomain();
@@ -49,13 +49,14 @@ export async function fetchResourcesStreaming(
     }
 
     let buffer = "";
+    let capturedResultId: string | undefined = undefined;
 
     while (true) {
       const { done, value } = await reader.read();
 
       if (done) {
         clearTimeout(timer);
-        onComplete();
+        onComplete(capturedResultId);
         break;
       }
 
@@ -86,22 +87,31 @@ export async function fetchResourcesStreaming(
             // Handle hayhooks response format: choices[0].delta.content
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
-              // Content should be a JSON string representing a Resource
+              // Content should be a JSON string representing a Resource or result_id
               try {
-                const resource = JSON.parse(content) as Resource;
-                // Validate basic structure
-                if (resource.name && resource.description) {
-                  onResource(resource);
+                const contentObj = JSON.parse(content);
+
+                // Check if this is a result_id response
+                if (contentObj.result_id) {
+                  capturedResultId = contentObj.result_id;
+                  console.log("Captured result_id:", capturedResultId);
+                } else if (contentObj.name && contentObj.description) {
+                  // This is a resource
+                  onResource(contentObj as Resource);
                 }
               } catch (e) {
-                console.error("Failed to parse resource from content:", e, content);
+                console.error(
+                  "Failed to parse resource from content:",
+                  e,
+                  content,
+                );
               }
             }
 
             // Check for finish_reason to detect completion
             if (parsed.choices?.[0]?.finish_reason === "stop") {
               clearTimeout(timer);
-              onComplete();
+              onComplete(capturedResultId);
               return;
             }
           } catch (e) {
