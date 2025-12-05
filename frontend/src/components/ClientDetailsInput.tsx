@@ -295,30 +295,37 @@ export function ClientDetailsInput({
         </CardContent>
       </Card>
 
-      <Button
-        type="button"
-        onClick={onFindResources}
-        disabled={
-          loading ||
-          (selectedCategories.length === 0 && !clientDescription.trim())
-        }
-        className="min-w-[16rem] w-full row-auto generate-referrals-button text-lg pt-6 pb-6 mt-6"
-        data-testid="findResourcesButton"
-        aria-busy={loading}
-        aria-live="polite"
-      >
-        {!loading && (
-          <>
-            <Sparkles className="w-5 h-5" aria-hidden="true" /> Find Resources
-          </>
+      <div className="space-y-2">
+        <Button
+          type="button"
+          onClick={onFindResources}
+          disabled={
+            loading ||
+            (selectedCategories.length === 0 && !clientDescription.trim())
+          }
+          className="min-w-[16rem] w-full row-auto generate-referrals-button text-lg pt-6 pb-6"
+          data-testid="findResourcesButton"
+          aria-busy={loading}
+          aria-live="polite"
+        >
+          {!loading && (
+            <>
+              <Sparkles className="w-5 h-5" aria-hidden="true" /> Find Resources
+            </>
+          )}
+          {loading && (
+            <>
+              <Spinner className="w-5 h-5" aria-hidden="true" />
+              Generating Resources...
+            </>
+          )}
+        </Button>
+        {!loading && selectedCategories.length === 0 && !clientDescription.trim() && (
+          <p className="text-center text-gray-600 text-base">
+            Please describe your client's situation above or select at least one resource category to continue
+          </p>
         )}
-        {loading && (
-          <>
-            <Spinner className="w-5 h-5" aria-hidden="true" />
-            Generating Resources...
-          </>
-        )}
-      </Button>
+      </div>
     </>
   );
 }
