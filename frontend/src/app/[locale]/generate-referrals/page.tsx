@@ -4,7 +4,10 @@ import { ChevronLeft, Printer, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { fetchResources } from "@/util/fetchResources";
+import {
+  fetchResources,
+  fetchResourcesStreaming,
+} from "@/util/fetchResources";
 import { Resource } from "@/types/resources";
 import "@/app/globals.css";
 
@@ -54,6 +57,7 @@ export default function Page() {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   );
+  const [isStreamingResources, setIsStreamingResources] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -111,24 +115,50 @@ export default function Page() {
     const prompt_version_id = searchParams?.get("prompt_version_id") ?? null;
 
     setLoading(true);
+    setIsStreamingResources(true);
     setResult(null);
+    setRetainedResources([]); // Initialize with empty array to start showing resources
+    setReadyToPrint(true); // Show the results area immediately
     setErrorMessage(undefined);
+
+    // Accumulator for streaming resources
+    const streamedResources: Resource[] = [];
+
     try {
       const request = clientDescription + getCollatedReferralOptions();
-      const { resultId, resources, errorMessage } = await fetchResources(
+
+      await fetchResourcesStreaming(
         request,
         userEmail,
-        prompt_version_id,
+        // onResource callback - add each resource as it arrives
+        (resource: Resource) => {
+          streamedResources.push(resource);
+          setRetainedResources([...streamedResources]); // Update UI with new resource
+          console.log(`Received resource: ${resource.name}`);
+        },
+        // onComplete callback
+        () => {
+          setIsStreamingResources(false);
+          setLoading(false);
+          setResult(streamedResources);
+          console.log(`Streaming complete. Total resources: ${streamedResources.length}`);
+          // Note: We don't have a resultId from streaming, so email/print may need adjustment
+          // For now, we'll skip setting resultId
+        },
+        // onError callback
+        (error: string) => {
+          setIsStreamingResources(false);
+          setLoading(false);
+          setErrorMessage(error);
+          console.error("Streaming error:", error);
+        },
       );
-      setResultId(resultId);
-      setErrorMessage(errorMessage);
-      onResources(resources);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : "Unknown error";
       console.error(message);
-      setResult([]); // or keep null to hide area
-    } finally {
+      setIsStreamingResources(false);
       setLoading(false);
+      setErrorMessage("An unexpected error occurred. Please try again.");
     }
   }
 
@@ -447,6 +477,16 @@ export default function Page() {
                 <ClientDetailsPromptBubble
                   clientDescription={clientDescription}
                 />
+                {isStreamingResources && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex items-center gap-3">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                    <div className="text-blue-900 font-medium">
+                      {retainedResources && retainedResources.length > 0
+                        ? `Searching for resources... Found ${retainedResources.length} so far`
+                        : "Searching for resources..."}
+                    </div>
+                  </div>
+                )}
                 <ResourcesList
                   resources={retainedResources ?? []}
                   errorMessage={errorMessage}
