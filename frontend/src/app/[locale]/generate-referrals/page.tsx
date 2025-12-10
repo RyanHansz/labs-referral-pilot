@@ -205,6 +205,12 @@ export default function Page() {
   async function generateActionPlan() {
     if (selectedResources.length === 0) return;
 
+    console.log("=== Generating Action Plan ===");
+    console.log("Selected resources count:", selectedResources.length);
+    console.log("Selected resources:", JSON.stringify(selectedResources, null, 2));
+    console.log("User email:", userEmail);
+    console.log("Client description:", clientDescription);
+
     setIsGeneratingActionPlan(true);
     setIsStreaming(true);
     setActionPlan(null);
@@ -229,7 +235,23 @@ export default function Page() {
           setIsStreaming(false);
           setIsGeneratingActionPlan(false);
 
-          // The streaming response is pure markdown, not JSON
+          // Check if the response is JSON or markdown
+          console.log("Raw accumulated content:", accumulatedContent);
+
+          // Try to parse as JSON first (in case streaming didn't work)
+          try {
+            const jsonPlan = JSON.parse(accumulatedContent);
+            if (jsonPlan.title && jsonPlan.content) {
+              console.log("Detected JSON response from streaming endpoint");
+              setActionPlan(jsonPlan);
+              return;
+            }
+          } catch (jsonError) {
+            // Not JSON, continue with markdown parsing
+            console.log("Content is not JSON, parsing as markdown");
+          }
+
+          // The streaming response should be pure markdown
           // Extract title (first # heading) and create an ActionPlan object
           try {
             const lines = accumulatedContent.split("\n");

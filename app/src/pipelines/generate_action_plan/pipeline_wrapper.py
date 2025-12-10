@@ -117,6 +117,13 @@ class PipelineWrapper(BasePipelineWrapper):
             user_email = body.get("user_email", "")
             user_query = body.get("user_query", "")
 
+            # Debug logging for incoming resources
+            logger.info("=== Incoming Request Body ===")
+            logger.info("Resources raw type: %s", type(resources))
+            logger.info("Resources count: %d", len(resources))
+            if resources:
+                logger.info("First resource sample: %s", json.dumps(resources[0] if isinstance(resources[0], dict) else str(resources[0])[:200]))
+
             resource_objects = get_resources(resources)
 
             logger.info(
@@ -148,26 +155,79 @@ class PipelineWrapper(BasePipelineWrapper):
                 # Remove the JSON schema placeholder
                 msg_text = msg_text.replace("{{action_plan_json}}", "")
 
+                # For streaming, remove JSON-related instructions from the prompt
+                # Remove lines that mention JSON format requirements
+                lines = msg_text.split('\n')
+                filtered_lines = []
+                skip_json_section = False
+                for line in lines:
+                    # Skip lines that explicitly require JSON format
+                    if any(phrase in line.lower() for phrase in [
+                        "must be a valid json",
+                        "response must be a json",
+                        "return json",
+                        "json object",
+                        "don't repeat the schema",
+                        "json structure",
+                        "`title`, `summary`, and `content` keys"
+                    ]):
+                        skip_json_section = True
+                        continue
+                    if skip_json_section and line.strip() == "":
+                        skip_json_section = False
+                        continue
+                    if not skip_json_section:
+                        filtered_lines.append(line)
+
+                msg_text = '\n'.join(filtered_lines)
                 prompt_parts.append(msg_text)
 
             # Add streaming-specific override instructions at the end
+            # Make this MUCH stronger and clearer
             streaming_override = """
 
-**STREAMING MODE OVERRIDE:**
-For this streaming response, IGNORE the JSON format requirement above. Instead:
-- Output pure markdown text directly (no JSON wrapper)
-- Start with a # heading for the title
-- Include a brief summary paragraph
-- Then provide the full action plan with markdown formatting (headers, lists, links, bold text)
-- Do NOT wrap your response in JSON structure
-- Output the content as if you're writing a document, not JSON
+===== CRITICAL INSTRUCTION - OVERRIDE ALL PREVIOUS FORMAT REQUIREMENTS =====
 
-**CRITICAL - ACCURACY REQUIREMENT:**
-- ONLY include timeline, document, or process details that are EXPLICITLY stated in the resource information provided
-- DO NOT make up realistic-sounding but generic timelines (like "a few days", "1-2 weeks", "usually takes X time")
-- If timeline information is not provided in the resource details, DO NOT include a Timeline section
-- If specific documents are not listed in the resource, DO NOT guess what documents might be needed
-- When in doubt, leave out speculative details - only include facts from the resources
+IGNORE ALL PREVIOUS JSON FORMAT REQUIREMENTS. This is a STREAMING response.
+
+YOU MUST OUTPUT PURE MARKDOWN TEXT ONLY. NO JSON!
+
+Format your response EXACTLY like this example:
+
+# Action Plan for Housing and Support Services
+
+This action plan outlines the steps to access housing assistance and support services through the recommended resources.
+
+## 1. Goodwill Housing Resource Center
+
+**What they offer:**
+[Details from the resource description]
+
+**Next steps:**
+- Call (555) 123-4567 to schedule an appointment
+- Visit their office at 123 Main Street
+
+## 2. Community Support Services
+
+[Continue with similar format for each resource]
+
+## Timeline
+[Only include if timeline info is explicitly provided in resources]
+
+## Important Notes
+[Any critical information from the resources]
+
+REMEMBER:
+- DO NOT output JSON format
+- DO NOT use curly braces { }
+- DO NOT include "title:", "summary:", or "content:" keys
+- Just write natural markdown text as if writing a document
+- Start directly with the # heading
+- Use markdown formatting throughout (##, -, **, etc.)
+
+**ACCURACY REQUIREMENT:**
+- ONLY include details that are EXPLICITLY stated in the resource information
+- DO NOT make up timelines, documents, or processes not mentioned in resources
 """
             prompt_parts.append(streaming_override)
 

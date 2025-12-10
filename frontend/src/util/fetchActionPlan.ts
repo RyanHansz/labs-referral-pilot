@@ -139,18 +139,24 @@ export async function fetchActionPlanStreaming(
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(), 600_000); // 10 minutes timeout
 
+  const requestBody = {
+    model: "generate_action_plan", // Pipeline name as model
+    messages: [{ role: "user", content: userQuery }],
+    stream: true,
+    resources: resources,
+    user_email: userEmail,
+    user_query: userQuery,
+  };
+
+  console.log("=== fetchActionPlanStreaming Request ===");
+  console.log("URL:", url);
+  console.log("Request body:", JSON.stringify(requestBody, null, 2));
+
   try {
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "generate_action_plan", // Pipeline name as model
-        messages: [{ role: "user", content: userQuery }],
-        stream: true,
-        resources: resources,
-        user_email: userEmail,
-        user_query: userQuery,
-      }),
+      body: JSON.stringify(requestBody),
       signal: ac.signal,
     });
 
