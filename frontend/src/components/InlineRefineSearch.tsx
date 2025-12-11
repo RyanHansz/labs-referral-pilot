@@ -155,7 +155,7 @@ export function InlineRefineSearch({
           <div className="flex items-start gap-3">
             <Search className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <label className="text-sm font-semibold text-gray-700 block mb-1">Your search query:</label>
+              <label className="text-sm font-semibold text-gray-700 block mb-1">You searched for:</label>
               <h2 className="text-lg font-medium text-gray-900" role="status" aria-label="Current search query">{initialQuery}</h2>
 
               {/* Active Filters Display */}
@@ -216,7 +216,7 @@ export function InlineRefineSearch({
           <div className="flex items-start gap-3">
             <Search className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <label className="text-sm font-semibold text-gray-700 block mb-1">Your search query:</label>
+              <label className="text-sm font-semibold text-gray-700 block mb-1">You searched for:</label>
               <h2 className="text-lg font-medium text-gray-900" aria-label="Current search query">{initialQuery}</h2>
 
               {/* Active Filters Display */}
@@ -290,7 +290,7 @@ export function InlineRefineSearch({
         {/* Query Input */}
         <div>
           <label htmlFor="search-query-input" className="text-sm font-semibold text-gray-700 block mb-2">
-            Update your search query:
+            Update your search:
           </label>
           <Textarea
             id="search-query-input"
@@ -322,7 +322,7 @@ export function InlineRefineSearch({
                 <button
                   key={type.id}
                   onClick={() => toggleResourceType(type.id)}
-                  className={`p-4 rounded-lg border-2 transition-all text-left ${
+                  className={`p-4 rounded-lg border-2 transition-all text-left cursor-pointer ${
                     isSelected
                       ? "border-blue-600 bg-blue-50"
                       : "border-gray-200 bg-white hover:border-gray-300"
@@ -351,7 +351,7 @@ export function InlineRefineSearch({
                 <button
                   key={type.id}
                   onClick={() => toggleResourceType(type.id)}
-                  className={`p-4 rounded-lg border-2 transition-all text-left ${
+                  className={`p-4 rounded-lg border-2 transition-all text-left cursor-pointer ${
                     isSelected
                       ? "border-blue-600 bg-blue-50"
                       : "border-gray-200 bg-white hover:border-gray-300"
@@ -385,7 +385,7 @@ export function InlineRefineSearch({
                   <button
                     key={subcategory.id}
                     onClick={() => toggleSubcategory(subcategory.id)}
-                    className={`p-3 rounded-lg border transition-all text-left ${
+                    className={`p-3 rounded-lg border transition-all text-left cursor-pointer ${
                       isSelected
                         ? "border-blue-600 bg-blue-50"
                         : "border-gray-200 bg-white hover:border-gray-300"
