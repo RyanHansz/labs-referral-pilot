@@ -22,7 +22,7 @@ import { Upload } from "lucide-react";
 import WelcomeUserInputScreen from "@/components/WelcomeUserInputScreen";
 import { PilotFeedbackBanner } from "@/components/PilotFeedbackBanner";
 import { GoodwillReferralToolHeaderPilot } from "@/components/GoodwillReferralToolHeaderPilot";
-import ClientDetailsPromptBubble from "@/components/ClientDetailsPromptBubble";
+import { InlineRefineSearch } from "@/components/InlineRefineSearch";
 import {
   ClientDetailsInput,
   resourceCategories,
@@ -282,6 +282,24 @@ export default function Page() {
     }
   };
 
+  // Handle refined search submission
+  const handleRefineSearch = (
+    query: string,
+    categories: string[],
+    resourceTypes: string[],
+    location: string
+  ) => {
+    setClientDescription(query);
+    setSelectedCategories(categories);
+    setSelectedResourceTypes(resourceTypes);
+    setLocationText(location);
+
+    // Trigger new search with updated parameters
+    setTimeout(() => {
+      void handleClick();
+    }, 0);
+  };
+
   return (
     <>
       {!userName || !userEmail ? (
@@ -373,9 +391,15 @@ export default function Page() {
                     {resultId && <EmailReferralsButton resultId={resultId} />}
                   </div>
                 </div>
-                <ClientDetailsPromptBubble
-                  clientDescription={clientDescription}
+                {/* Inline Refine Search */}
+                <InlineRefineSearch
+                  initialQuery={clientDescription}
+                  initialCategories={selectedCategories}
+                  initialResourceTypes={selectedResourceTypes}
+                  initialLocation={locationText}
+                  onRefineSearch={handleRefineSearch}
                 />
+
                 <ResourcesList
                   resources={retainedResources ?? []}
                   errorMessage={errorMessage}
