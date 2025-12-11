@@ -265,7 +265,7 @@ export function InlineRefineSearch({
           </p>
           <Button
             onClick={() => setIsEditing(true)}
-            className="bg-blue-600 text-white hover:bg-blue-700 font-medium px-6"
+            className="bg-blue-600 text-white hover:bg-blue-700 font-medium px-6 cursor-pointer"
             aria-label="Refine your search query and filters"
           >
             <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -474,7 +474,7 @@ export function InlineRefineSearch({
             <Button
               variant="outline"
               onClick={handleCancel}
-              className="border-gray-300 hover:bg-gray-50 font-medium"
+              className="border-gray-300 hover:bg-gray-50 font-medium cursor-pointer"
               aria-label="Cancel editing and close"
             >
               <X className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -483,7 +483,7 @@ export function InlineRefineSearch({
             <Button
               onClick={handleSubmit}
               disabled={!hasChanges}
-              className={`font-medium px-6 ${hasChanges ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+              className={`font-medium px-6 ${hasChanges ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
               aria-label={hasChanges ? "Search with updated query and filters" : "No changes made to search"}
               aria-disabled={!hasChanges}
             >
