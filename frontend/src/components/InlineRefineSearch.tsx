@@ -474,7 +474,7 @@ export function InlineRefineSearch({
             <Button
               variant="outline"
               onClick={handleCancel}
-              className="border-gray-300 hover:bg-gray-50 font-medium cursor-pointer"
+              className="border-gray-300 hover:bg-gray-100 hover:text-gray-900 font-medium cursor-pointer"
               aria-label="Cancel editing and close"
             >
               <X className="w-4 h-4 mr-2" aria-hidden="true" />
