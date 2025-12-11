@@ -151,44 +151,50 @@ export function InlineRefineSearch({
   if (isLoading) {
     return (
       <div className="space-y-3">
-        <div className="bg-gray-100 rounded-lg px-4 py-3">
-          <h2 className="text-gray-800 text-base">{initialQuery}</h2>
+        <div className="bg-white rounded-lg border-2 border-gray-200 p-4 shadow-sm">
+          <div className="flex items-start gap-3">
+            <Search className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" aria-hidden="true" />
+            <div className="flex-1">
+              <label className="text-sm font-semibold text-gray-700 block mb-1">Your search query:</label>
+              <h2 className="text-lg font-medium text-gray-900" role="status" aria-label="Current search query">{initialQuery}</h2>
 
-          {/* Active Filters Display */}
-          {(initialCategories.length > 0 || initialResourceTypes.length > 0 || initialLocation) && (
-            <div className="mt-3 pt-3 border-t border-gray-200">
-              <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                <FileText className="w-4 h-4" />
-                <span className="font-medium">Active Filters:</span>
-              </div>
+              {/* Active Filters Display */}
+              {(initialCategories.length > 0 || initialResourceTypes.length > 0 || initialLocation) && (
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                    <FileText className="w-4 h-4" aria-hidden="true" />
+                    <span className="font-medium">Active Filters:</span>
+                  </div>
 
-              <div className="text-sm text-gray-700">
-                {initialResourceTypes.length > 0 && (
-                  <div>
-                    <span className="font-medium">Categories:</span>{" "}
-                    {initialResourceTypes.map(type => {
-                      const resourceType = [...resourceProviderTypes, ...additionalResourceTypes].find(t => t.id === type);
-                      return resourceType?.label;
-                    }).filter(Boolean).join(", ")}
+                  <div className="text-sm text-gray-700">
+                    {initialResourceTypes.length > 0 && (
+                      <div>
+                        <span className="font-medium">Categories:</span>{" "}
+                        {initialResourceTypes.map(type => {
+                          const resourceType = [...resourceProviderTypes, ...additionalResourceTypes].find(t => t.id === type);
+                          return resourceType?.label;
+                        }).filter(Boolean).join(", ")}
+                      </div>
+                    )}
+                    {initialCategories.length > 0 && (
+                      <div className="mt-1">
+                        <span className="font-medium">Resources:</span>{" "}
+                        {initialCategories.map(categoryId => {
+                          const category = resourceCategories.find((c) => c.id === categoryId);
+                          return category?.label;
+                        }).filter(Boolean).join(", ")}
+                      </div>
+                    )}
+                    {initialLocation && (
+                      <div className="mt-1">
+                        <span className="font-medium">Location:</span> {initialLocation}
+                      </div>
+                    )}
                   </div>
-                )}
-                {initialCategories.length > 0 && (
-                  <div className="mt-1">
-                    <span className="font-medium">Resources:</span>{" "}
-                    {initialCategories.map(categoryId => {
-                      const category = resourceCategories.find((c) => c.id === categoryId);
-                      return category?.label;
-                    }).filter(Boolean).join(", ")}
-                  </div>
-                )}
-                {initialLocation && (
-                  <div className="mt-1">
-                    <span className="font-medium">Location:</span> {initialLocation}
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Loading State */}
@@ -206,57 +212,63 @@ export function InlineRefineSearch({
     // Read-only view
     return (
       <div className="space-y-3">
-        <div className="bg-gray-100 rounded-lg px-4 py-3">
-          <h2 className="text-gray-800 text-base">{initialQuery}</h2>
+        <div className="bg-white rounded-lg border-2 border-gray-200 p-4 shadow-sm">
+          <div className="flex items-start gap-3">
+            <Search className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" aria-hidden="true" />
+            <div className="flex-1">
+              <label className="text-sm font-semibold text-gray-700 block mb-1">Your search query:</label>
+              <h2 className="text-lg font-medium text-gray-900" aria-label="Current search query">{initialQuery}</h2>
 
-          {/* Active Filters Display */}
-          {(initialCategories.length > 0 || initialResourceTypes.length > 0 || initialLocation) && (
-            <div className="mt-3 pt-3 border-t border-gray-200">
-              <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                <FileText className="w-4 h-4" />
-                <span className="font-medium">Active Filters:</span>
-              </div>
+              {/* Active Filters Display */}
+              {(initialCategories.length > 0 || initialResourceTypes.length > 0 || initialLocation) && (
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                    <FileText className="w-4 h-4" aria-hidden="true" />
+                    <span className="font-medium">Active Filters:</span>
+                  </div>
 
-              <div className="text-sm text-gray-700">
-                {initialResourceTypes.length > 0 && (
-                  <div>
-                    <span className="font-medium">Categories:</span>{" "}
-                    {initialResourceTypes.map(type => {
-                      const resourceType = [...resourceProviderTypes, ...additionalResourceTypes].find(t => t.id === type);
-                      return resourceType?.label;
-                    }).filter(Boolean).join(", ")}
+                  <div className="text-sm text-gray-700" role="group" aria-label="Applied search filters">
+                    {initialResourceTypes.length > 0 && (
+                      <div>
+                        <span className="font-medium">Categories:</span>{" "}
+                        {initialResourceTypes.map(type => {
+                          const resourceType = [...resourceProviderTypes, ...additionalResourceTypes].find(t => t.id === type);
+                          return resourceType?.label;
+                        }).filter(Boolean).join(", ")}
+                      </div>
+                    )}
+                    {initialCategories.length > 0 && (
+                      <div className="mt-1">
+                        <span className="font-medium">Resources:</span>{" "}
+                        {initialCategories.map(categoryId => {
+                          const category = resourceCategories.find((c) => c.id === categoryId);
+                          return category?.label;
+                        }).filter(Boolean).join(", ")}
+                      </div>
+                    )}
+                    {initialLocation && (
+                      <div className="mt-1">
+                        <span className="font-medium">Location:</span> {initialLocation}
+                      </div>
+                    )}
                   </div>
-                )}
-                {initialCategories.length > 0 && (
-                  <div className="mt-1">
-                    <span className="font-medium">Resources:</span>{" "}
-                    {initialCategories.map(categoryId => {
-                      const category = resourceCategories.find((c) => c.id === categoryId);
-                      return category?.label;
-                    }).filter(Boolean).join(", ")}
-                  </div>
-                )}
-                {initialLocation && (
-                  <div className="mt-1">
-                    <span className="font-medium">Location:</span> {initialLocation}
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Refine Search Section */}
-        <div className="bg-gray-50 rounded-lg p-4 text-center border border-gray-200">
-          <p className="text-gray-700 mb-3">
+        <div className="bg-blue-50 rounded-lg p-5 text-center border border-blue-200">
+          <p className="text-gray-800 mb-3 font-medium">
             Not seeing the right results? Add more details to get better matches
           </p>
           <Button
             onClick={() => setIsEditing(true)}
-            variant="outline"
-            className="border-blue-600 text-blue-600 hover:bg-blue-50"
+            className="bg-blue-600 text-white hover:bg-blue-700 font-medium px-6"
+            aria-label="Refine your search query and filters"
           >
-            <Sparkles className="w-4 h-4 mr-2" />
+            <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" />
             Refine Search
           </Button>
         </div>
@@ -266,10 +278,10 @@ export function InlineRefineSearch({
 
   // Editing view
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-5 border border-blue-200">
+    <div className="bg-white rounded-lg border-2 border-blue-400 p-5 shadow-sm">
       <div className="flex items-start justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-blue-600" />
+          <Sparkles className="w-5 h-5 text-blue-600" aria-hidden="true" />
           Refine your search to get better results
         </h3>
       </div>
@@ -277,16 +289,21 @@ export function InlineRefineSearch({
       <div className="space-y-6">
         {/* Query Input */}
         <div>
+          <label htmlFor="search-query-input" className="text-sm font-semibold text-gray-700 block mb-2">
+            Update your search query:
+          </label>
           <Textarea
+            id="search-query-input"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Describe your client's needs..."
-            className="min-h-[100px] text-base bg-white"
+            className="min-h-[100px] text-base bg-white border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
             autoFocus
+            aria-describedby="query-help-text"
           />
-          <p className="text-sm text-gray-600 mt-2 flex items-center gap-1">
-            <Lightbulb className="w-4 h-4" />
+          <p id="query-help-text" className="text-sm text-gray-600 mt-2 flex items-center gap-1">
+            <Lightbulb className="w-4 h-4" aria-hidden="true" />
             Be specific: Include client's situation, barriers they face, location, timeline, and any special circumstances
           </p>
         </div>
@@ -411,9 +428,9 @@ export function InlineRefineSearch({
 
         {/* Active Filters Display */}
         {(selectedResourceTypes.length > 0 || selectedCategories.length > 0 || selectedSubcategories.length > 0) && (
-          <div className="pt-4 border-t border-blue-200">
+          <div className="pt-4 border-t border-gray-200">
             <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-gray-600" />
+              <FileText className="w-4 h-4 text-gray-600" aria-hidden="true" />
               Active Filters:
             </h4>
             <div className="text-sm text-gray-700">
@@ -449,25 +466,28 @@ export function InlineRefineSearch({
         )}
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between pt-4 border-t border-blue-200">
-          <p className="text-xs text-gray-500">
-            Press <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded">⌘</kbd> + <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded">Enter</kbd> to search
+        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+          <p className="text-sm text-gray-600" aria-label="Keyboard shortcut">
+            Press <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-300 rounded">⌘</kbd> + <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-300 rounded">Enter</kbd> to search
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button
               variant="outline"
               onClick={handleCancel}
-              className="border-gray-300 hover:bg-gray-50"
+              className="border-gray-300 hover:bg-gray-50 font-medium"
+              aria-label="Cancel editing and close"
             >
-              <X className="w-4 h-4 mr-2" />
+              <X className="w-4 h-4 mr-2" aria-hidden="true" />
               Cancel
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={!hasChanges}
-              className={`${hasChanges ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+              className={`font-medium px-6 ${hasChanges ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+              aria-label={hasChanges ? "Search with updated query and filters" : "No changes made to search"}
+              aria-disabled={!hasChanges}
             >
-              <Search className="w-4 h-4 mr-2" />
+              <Search className="w-4 h-4 mr-2" aria-hidden="true" />
               Get Better Results
             </Button>
           </div>
