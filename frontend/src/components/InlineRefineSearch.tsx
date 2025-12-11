@@ -32,6 +32,7 @@ interface InlineRefineSearchProps {
   initialCategories: string[];
   initialResourceTypes: string[];
   initialLocation: string;
+  isLoading?: boolean;
   onRefineSearch: (
     query: string,
     categories: string[],
@@ -72,6 +73,7 @@ export function InlineRefineSearch({
   initialCategories,
   initialResourceTypes,
   initialLocation,
+  isLoading = false,
   onRefineSearch,
 }: InlineRefineSearchProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -144,6 +146,61 @@ export function InlineRefineSearch({
     selectedResourceTypes.length !== initialResourceTypes.length ||
     location !== initialLocation ||
     selectedSubcategories.length > 0;
+
+  // Show loading state when searching
+  if (isLoading) {
+    return (
+      <div className="space-y-3">
+        <div className="bg-gray-100 rounded-lg px-4 py-3">
+          <h2 className="text-gray-800 text-base">{initialQuery}</h2>
+
+          {/* Active Filters Display */}
+          {(initialCategories.length > 0 || initialResourceTypes.length > 0 || initialLocation) && (
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                <FileText className="w-4 h-4" />
+                <span className="font-medium">Active Filters:</span>
+              </div>
+
+              <div className="text-sm text-gray-700">
+                {initialResourceTypes.length > 0 && (
+                  <div>
+                    <span className="font-medium">Categories:</span>{" "}
+                    {initialResourceTypes.map(type => {
+                      const resourceType = [...resourceProviderTypes, ...additionalResourceTypes].find(t => t.id === type);
+                      return resourceType?.label;
+                    }).filter(Boolean).join(", ")}
+                  </div>
+                )}
+                {initialCategories.length > 0 && (
+                  <div className="mt-1">
+                    <span className="font-medium">Resources:</span>{" "}
+                    {initialCategories.map(categoryId => {
+                      const category = resourceCategories.find((c) => c.id === categoryId);
+                      return category?.label;
+                    }).filter(Boolean).join(", ")}
+                  </div>
+                )}
+                {initialLocation && (
+                  <div className="mt-1">
+                    <span className="font-medium">Location:</span> {initialLocation}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Loading State */}
+        <div className="bg-blue-50 rounded-lg p-6 text-center border border-blue-200">
+          <div className="flex justify-center items-center space-x-3">
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent"></div>
+            <p className="text-blue-800 font-medium">Searching for resources...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!isEditing) {
     // Read-only view
