@@ -3,26 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {
-  Accessibility,
-  Baby,
-  Briefcase,
   Building,
-  DollarSign,
   FileText,
-  Flag,
-  GraduationCap,
   Heart,
-  Home,
-  MapPin,
-  Scale,
-  Shield,
-  Sparkles,
-  Stethoscope,
-  Users,
-  Utensils,
-  Car,
   Lightbulb,
+  MapPin,
   Search,
+  Sparkles,
+  Users,
   X,
 } from "lucide-react";
 import { resourceCategories } from "@/components/ClientDetailsInput";
@@ -41,31 +29,11 @@ interface InlineRefineSearchProps {
   ) => void;
 }
 
-// Sub-categories for Local Community Resources
-const communitySubcategories = [
-  { id: "food", label: "Food & Nutrition", description: "Food banks, meal programs, SNAP enrollment", icon: Utensils },
-  { id: "housing", label: "Housing & Shelter", description: "Emergency shelter, rental assistance, utilities", icon: Home },
-  { id: "healthcare", label: "Healthcare Services", description: "Clinics, mental health, dental care", icon: Stethoscope },
-  { id: "transportation", label: "Transportation", description: "Bus passes, rides, gas assistance", icon: Car },
-  { id: "childcare", label: "Child Care & Education", description: "Daycare, after-school programs", icon: Baby },
-  { id: "legal", label: "Legal Services", description: "Legal aid, immigration assistance", icon: Scale },
-  { id: "financial", label: "Financial Assistance", description: "Cash assistance, bill payment help", icon: DollarSign },
-  { id: "clothing", label: "Clothing & Household", description: "Clothing closets, furniture, household items", icon: Home },
-  { id: "employment", label: "Employment Support", description: "Job search help, resume assistance", icon: Briefcase },
-];
-
-// Resource provider types
+// Resource provider types - matching homepage exactly
 const resourceProviderTypes = [
-  { id: "goodwill", label: "Goodwill Resources & Programs", description: "Job training, career services, and Goodwill-specific programs", icon: Heart },
-  { id: "community", label: "Local Community Resources", description: "Food banks, shelters, community organizations, and local support", icon: Users },
-  { id: "government", label: "Government Benefits", description: "SNAP, Medicaid, housing assistance, and federal/state programs", icon: Building },
-];
-
-// Additional resource types
-const additionalResourceTypes = [
-  { id: "job-postings", label: "Job Postings", description: "Current job openings, employment opportunities, and hiring events", icon: Briefcase },
-  { id: "gcta", label: "GCTA Trainings", description: "Goodwill Career Training Academy programs and certifications", icon: GraduationCap },
-  { id: "cat", label: "CAT Trainings", description: "Career Advancement Training and specialized skill development", icon: GraduationCap },
+  { id: "goodwill", label: "Goodwill Internal", icon: Heart },
+  { id: "government", label: "Government", icon: Building },
+  { id: "community", label: "Community", icon: Users },
 ];
 
 export function InlineRefineSearch({
@@ -81,7 +49,6 @@ export function InlineRefineSearch({
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialCategories);
   const [selectedResourceTypes, setSelectedResourceTypes] = useState<string[]>(initialResourceTypes);
   const [location, setLocation] = useState(initialLocation);
-  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
 
   // Reset state when props change (new search)
   useEffect(() => {
@@ -90,7 +57,6 @@ export function InlineRefineSearch({
       setSelectedCategories(initialCategories);
       setSelectedResourceTypes(initialResourceTypes);
       setLocation(initialLocation);
-      setSelectedSubcategories([]);
     }
   }, [initialQuery, initialCategories, initialResourceTypes, initialLocation, isEditing]);
 
@@ -108,18 +74,8 @@ export function InlineRefineSearch({
     );
   };
 
-  const toggleSubcategory = (subcategoryId: string) => {
-    setSelectedSubcategories((prev) =>
-      prev.includes(subcategoryId)
-        ? prev.filter((id) => id !== subcategoryId)
-        : [...prev, subcategoryId]
-    );
-  };
-
   const handleSubmit = () => {
-    // Combine selected categories and subcategories
-    const allCategories = [...selectedCategories, ...selectedSubcategories];
-    onRefineSearch(query, allCategories, selectedResourceTypes, location);
+    onRefineSearch(query, selectedCategories, selectedResourceTypes, location);
     setIsEditing(false);
   };
 
@@ -129,7 +85,6 @@ export function InlineRefineSearch({
     setSelectedCategories(initialCategories);
     setSelectedResourceTypes(initialResourceTypes);
     setLocation(initialLocation);
-    setSelectedSubcategories([]);
     setIsEditing(false);
   };
 
@@ -144,8 +99,7 @@ export function InlineRefineSearch({
     query !== initialQuery ||
     selectedCategories.length !== initialCategories.length ||
     selectedResourceTypes.length !== initialResourceTypes.length ||
-    location !== initialLocation ||
-    selectedSubcategories.length > 0;
+    location !== initialLocation;
 
   // Show loading state when searching
   if (isLoading) {
@@ -169,16 +123,16 @@ export function InlineRefineSearch({
                   <div className="text-sm text-gray-700">
                     {initialResourceTypes.length > 0 && (
                       <div>
-                        <span className="font-medium">Categories:</span>{" "}
+                        <span className="font-medium">Provider Types:</span>{" "}
                         {initialResourceTypes.map(type => {
-                          const resourceType = [...resourceProviderTypes, ...additionalResourceTypes].find(t => t.id === type);
+                          const resourceType = resourceProviderTypes.find(t => t.id === type);
                           return resourceType?.label;
                         }).filter(Boolean).join(", ")}
                       </div>
                     )}
                     {initialCategories.length > 0 && (
                       <div className="mt-1">
-                        <span className="font-medium">Resources:</span>{" "}
+                        <span className="font-medium">Resource Categories:</span>{" "}
                         {initialCategories.map(categoryId => {
                           const category = resourceCategories.find((c) => c.id === categoryId);
                           return category?.label;
@@ -230,16 +184,16 @@ export function InlineRefineSearch({
                   <div className="text-sm text-gray-700" role="group" aria-label="Applied search filters">
                     {initialResourceTypes.length > 0 && (
                       <div>
-                        <span className="font-medium">Categories:</span>{" "}
+                        <span className="font-medium">Provider Types:</span>{" "}
                         {initialResourceTypes.map(type => {
-                          const resourceType = [...resourceProviderTypes, ...additionalResourceTypes].find(t => t.id === type);
+                          const resourceType = resourceProviderTypes.find(t => t.id === type);
                           return resourceType?.label;
                         }).filter(Boolean).join(", ")}
                       </div>
                     )}
                     {initialCategories.length > 0 && (
                       <div className="mt-1">
-                        <span className="font-medium">Resources:</span>{" "}
+                        <span className="font-medium">Resource Categories:</span>{" "}
                         {initialCategories.map(categoryId => {
                           const category = resourceCategories.find((c) => c.id === categoryId);
                           return category?.label;
@@ -308,13 +262,42 @@ export function InlineRefineSearch({
           </p>
         </div>
 
-        {/* Adjust Filters Section */}
+        {/* Resource Categories - matching homepage */}
         <div>
-          <h4 className="font-semibold text-gray-900 mb-3">Adjust Filters:</h4>
-          <p className="text-sm text-gray-600 mb-4">Select categories to refine your search</p>
+          <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <FileText className="w-4 h-4 text-blue-600" />
+            Focus on Specific Resource Types
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            {resourceCategories.map((category) => {
+              const Icon = category.icon;
+              const isSelected = selectedCategories.includes(category.id);
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => toggleCategory(category.id)}
+                  className={`text-sm flex flex-col items-center justify-center px-2 py-3 min-h-20 rounded-lg border-2 transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
+                      : "text-gray-600 border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900 hover:border-gray-300"
+                  }`}
+                  aria-pressed={isSelected}
+                >
+                  <Icon className="w-6 h-6 mb-2" />
+                  <span className="text-center break-words">{category.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-          {/* Main Resource Provider Types */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+        {/* Resource Provider Types - matching homepage */}
+        <div>
+          <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <Building className="w-4 h-4 text-blue-600" />
+            Resource Provider Types
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {resourceProviderTypes.map((type) => {
               const Icon = type.icon;
               const isSelected = selectedResourceTypes.includes(type.id);
@@ -322,90 +305,20 @@ export function InlineRefineSearch({
                 <button
                   key={type.id}
                   onClick={() => toggleResourceType(type.id)}
-                  className={`p-4 rounded-lg border-2 transition-all text-left cursor-pointer ${
+                  className={`h-12 text-sm rounded-lg border-2 flex items-center justify-center gap-2 transition-all cursor-pointer ${
                     isSelected
-                      ? "border-blue-600 bg-blue-50"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
+                      : "text-gray-600 border-gray-200 bg-white hover:bg-gray-100 hover:text-gray-900 hover:border-gray-300"
                   }`}
+                  aria-pressed={isSelected}
                 >
-                  <div className="flex items-start gap-3">
-                    <Icon className={`w-5 h-5 mt-0.5 ${isSelected ? "text-blue-600" : "text-gray-600"}`} />
-                    <div>
-                      <div className={`font-semibold text-sm ${isSelected ? "text-blue-900" : "text-gray-900"}`}>
-                        {type.label}
-                      </div>
-                      <div className="text-xs text-gray-600 mt-1">{type.description}</div>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Additional Resource Types */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {additionalResourceTypes.map((type) => {
-              const Icon = type.icon;
-              const isSelected = selectedResourceTypes.includes(type.id);
-              return (
-                <button
-                  key={type.id}
-                  onClick={() => toggleResourceType(type.id)}
-                  className={`p-4 rounded-lg border-2 transition-all text-left cursor-pointer ${
-                    isSelected
-                      ? "border-blue-600 bg-blue-50"
-                      : "border-gray-200 bg-white hover:border-gray-300"
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <Icon className={`w-5 h-5 mt-0.5 ${isSelected ? "text-blue-600" : "text-gray-600"}`} />
-                    <div>
-                      <div className={`font-semibold text-sm ${isSelected ? "text-blue-900" : "text-gray-900"}`}>
-                        {type.label}
-                      </div>
-                      <div className="text-xs text-gray-600 mt-1">{type.description}</div>
-                    </div>
-                  </div>
+                  <Icon className="w-4 h-4" />
+                  {type.label}
                 </button>
               );
             })}
           </div>
         </div>
-
-        {/* Sub-categories (shown when community is selected) */}
-        {selectedResourceTypes.includes("community") && (
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-3">Refine with sub-categories</h4>
-            <p className="text-sm text-gray-700 mb-3">Local Community Resources</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {communitySubcategories.map((subcategory) => {
-                const Icon = subcategory.icon;
-                const isSelected = selectedSubcategories.includes(subcategory.id);
-                return (
-                  <button
-                    key={subcategory.id}
-                    onClick={() => toggleSubcategory(subcategory.id)}
-                    className={`p-3 rounded-lg border transition-all text-left cursor-pointer ${
-                      isSelected
-                        ? "border-blue-600 bg-blue-50"
-                        : "border-gray-200 bg-white hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-start gap-2">
-                      <Icon className={`w-4 h-4 mt-0.5 ${isSelected ? "text-blue-600" : "text-gray-600"}`} />
-                      <div>
-                        <div className={`font-medium text-sm ${isSelected ? "text-blue-900" : "text-gray-900"}`}>
-                          {subcategory.label}
-                        </div>
-                        <div className="text-xs text-gray-600 mt-0.5">{subcategory.description}</div>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
         {/* Location Preferences */}
         <div>
@@ -427,7 +340,7 @@ export function InlineRefineSearch({
         </div>
 
         {/* Active Filters Display */}
-        {(selectedResourceTypes.length > 0 || selectedCategories.length > 0 || selectedSubcategories.length > 0) && (
+        {(selectedResourceTypes.length > 0 || selectedCategories.length > 0) && (
           <div className="pt-4 border-t border-gray-200">
             <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
               <FileText className="w-4 h-4 text-gray-600" aria-hidden="true" />
@@ -436,28 +349,19 @@ export function InlineRefineSearch({
             <div className="text-sm text-gray-700">
               {selectedResourceTypes.length > 0 && (
                 <div>
-                  <span className="font-medium">Categories:</span>{" "}
+                  <span className="font-medium">Provider Types:</span>{" "}
                   {selectedResourceTypes.map(type => {
-                    const resourceType = [...resourceProviderTypes, ...additionalResourceTypes].find(t => t.id === type);
+                    const resourceType = resourceProviderTypes.find(t => t.id === type);
                     return resourceType?.label;
                   }).filter(Boolean).join(", ")}
                 </div>
               )}
               {selectedCategories.length > 0 && (
                 <div className="mt-1">
-                  <span className="font-medium">Resources:</span>{" "}
+                  <span className="font-medium">Resource Categories:</span>{" "}
                   {selectedCategories.map(categoryId => {
                     const category = resourceCategories.find((c) => c.id === categoryId);
                     return category?.label;
-                  }).filter(Boolean).join(", ")}
-                </div>
-              )}
-              {selectedSubcategories.length > 0 && (
-                <div className="mt-1">
-                  <span className="font-medium">Sub-categories:</span>{" "}
-                  {selectedSubcategories.map(id => {
-                    const sub = communitySubcategories.find(s => s.id === id);
-                    return sub?.label;
                   }).filter(Boolean).join(", ")}
                 </div>
               )}
