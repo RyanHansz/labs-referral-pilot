@@ -53,6 +53,9 @@ export default function Page() {
   const [isGeneratingActionPlan, setIsGeneratingActionPlan] = useState(false);
   const [streamingContent, setStreamingContent] = useState<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [actionPlanError, setActionPlanError] = useState<string | undefined>(
+    undefined,
+  );
   const [activeTab, setActiveTab] = useState("find-referrals");
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
@@ -215,7 +218,7 @@ export default function Page() {
     setIsStreaming(true);
     setActionPlan(null);
     setStreamingContent("");
-    setErrorMessage(undefined);
+    setActionPlanError(undefined);
 
     // Use a local variable to accumulate content for parsing
     let accumulatedContent = "";
@@ -300,14 +303,14 @@ export default function Page() {
         (error: string) => {
           setIsStreaming(false);
           setIsGeneratingActionPlan(false);
-          setErrorMessage(error);
+          setActionPlanError(error);
         },
       );
     } catch (error) {
       console.error("Error generating action plan:", error);
       setIsStreaming(false);
       setIsGeneratingActionPlan(false);
-      setErrorMessage(
+      setActionPlanError(
         "The server encountered an unexpected error. Please try again later.",
       );
     }
@@ -525,6 +528,7 @@ export default function Page() {
                     isGeneratingActionPlan={isGeneratingActionPlan}
                     streamingContent={streamingContent}
                     isStreaming={isStreaming}
+                    actionPlanError={actionPlanError}
                     onResourceSelection={handleResourceSelection}
                     onSelectAllResources={handleSelectAllResources}
                     onGenerateActionPlan={() => void generateActionPlan()}

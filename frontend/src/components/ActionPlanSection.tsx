@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { FileText, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -13,6 +13,7 @@ interface ActionPlanSectionProps {
   isGeneratingActionPlan: boolean;
   streamingContent?: string;
   isStreaming?: boolean;
+  actionPlanError?: string;
   onResourceSelection: (resource: Resource, checked: boolean) => void;
   onSelectAllResources: () => void;
   onGenerateActionPlan: () => void;
@@ -25,6 +26,7 @@ export function ActionPlanSection({
   isGeneratingActionPlan,
   streamingContent,
   isStreaming,
+  actionPlanError,
   onResourceSelection,
   onSelectAllResources,
   onGenerateActionPlan,
@@ -106,6 +108,37 @@ export function ActionPlanSection({
           )}
         </CardContent>
       </Card>
+
+      {/* Action Plan Error */}
+      {actionPlanError && !isStreaming && !actionPlan && (
+        <Card className="bg-red-50 border-red-200 shadow-sm mb-5">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-red-900 flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-red-600" aria-hidden="true" />
+              Unable to Generate Action Plan
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-800 mb-3">
+              We encountered an issue while creating your action plan. This may
+              be due to a temporary server issue or network problem.
+            </p>
+            <p className="text-red-700 text-sm">
+              Please try again. If the problem persists, try selecting fewer
+              resources or refreshing the page.
+            </p>
+            <Button
+              onClick={onGenerateActionPlan}
+              variant="outline"
+              className="mt-4 border-red-300 text-red-700 hover:bg-red-100 cursor-pointer"
+              aria-label="Retry generating action plan"
+            >
+              <FileText className="w-4 h-4 mr-2" aria-hidden="true" />
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Action Plan Display */}
       {(actionPlan || isStreaming) && (
